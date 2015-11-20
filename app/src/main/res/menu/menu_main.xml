@@ -1,25 +1,49 @@
-<!--
-  ~ Copyright (C) 2015 The Android Open Source Project
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
     <item
         android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:title="@string/action.settings"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_image_loader"
+        android:title="@string/action.image.loader"
+        android:orderInCategory="100"
+        app:showAsAction="never">
+        <!-- "image adapter" submenu-->
+        <menu>
+            <group android:id="@+id/group_image_loader">
+                <item android:id="@+id/action_image_loader_none" android:title="@string/image.loader.none" />
+                <item android:id="@+id/action.image.loader.fresco" android:title="@string/image.loader.fresco" />
+                <item android:id="@+id/action.image.loader.fresco_okhttp" android:title="@string/image.loader.fresco.okhttp" />
+                <item android:id="@+id/action.image.loader.glide" android:title="@string/image.loader.glide" />
+                <item android:id="@+id/action.image.loader.picasso" android:title="@string/image.loader.picasso" />
+                <item android:id="@+id/action.image.loader.uil" android:title="@string/image.loader.uil" />
+                <item android:id="@+id/action.image.loader.aquery" android:title="@string/image.loader.aquery" />
+                <item android:id="@+id/action.image.loader.volley" android:title="@string/image.loader.volley" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/action_image_source"
+        android:title="@string/action.image.source"
+        android:orderInCategory="100"
+        app:showAsAction="never">
+        <!-- "image source" submenu-->
+        <menu>
+            <group android:id="@+id/group_image_source">
+                <item android:id="@+id/action_image_sotce_none" android:title="@string/image.source.none" />
+                <item android:id="@+id/action.image.source.network" android:title="@string/image.source.network" />
+                <item android:id="@+id/action.image.source.local" android:title="@string/image.source.local" />
+            </group>
+    </menu>
+    </item>
+
+
 </menu>

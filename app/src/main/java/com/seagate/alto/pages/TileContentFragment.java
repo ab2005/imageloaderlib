@@ -1,8 +1,4 @@
-/*
- * Copyright (C) 2015 Seagate LLC
- */
-
-package com.seagate.alto;
+package com.seagate.alto.pages;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,35 +10,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.alto.R;
+import com.seagate.alto.DetailActivity;
+import com.seagate.alto.MainActivity;
+import com.seagate.alto.R;
 
 /**
  * Provides UI for the view with Tile.
  */
 public class TileContentFragment extends Fragment {
-
+    int layoutId = R.layout.instr_item_tile;
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(
-                R.layout.recycler_view, container, false);
-        ContentAdapter adapter = new ContentAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
         // Set padding for Tiles
         int tilePadding = getResources().getDimensionPixelSize(R.dimen.tile_padding);
         recyclerView.setPadding(tilePadding, tilePadding, tilePadding, tilePadding);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
+        ((MainActivity)getActivity()).setAdapter();
+
+        if (recyclerView.getAdapter() == null) {
+            ContentAdapter adapter = new ContentAdapter();
+            recyclerView.setAdapter(adapter);
+        }
+
         return recyclerView;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_tile, parent, false));
             itemView.setOnClickListener(new View.OnClickListener() {

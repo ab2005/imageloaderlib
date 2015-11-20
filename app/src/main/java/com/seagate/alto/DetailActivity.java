@@ -9,8 +9,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.example.android.alto.R;
-
 /**
  * Provides UI for the Detail page with Collapsing Toolbar.
  */

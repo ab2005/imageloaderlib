@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/card_height"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/md_keylines"
+    android:layout_marginLeft="@dimen/md_keylines"
+    android:layout_marginRight="@dimen/md_keylines"
+    android:foreground="?attr/selectableItemBackground"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.seagate.alto.comparison.instrumentation.InstrumentedDraweeView
+            android:id="@+id/instr.image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_image_height"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:fadeDuration="300"
+            fresco:failureImage="@color/image_error"
+            fresco:failureImageScaleType="centerInside"
+            fresco:placeholderImage="@color/image_placeholder"
+            fresco:placeholderImageScaleType="fitCenter"
+            fresco:retryImage="@color/image_retrying"
+            fresco:retryImageScaleType="centerCrop" />
+
+        <!--fresco:progressBarImage="@color/image_progress_bar"-->
+        <!--fresco:progressBarImageScaleType="centerInside"-->
+        <!--fresco:progressBarAutoRotateInterval="1000"-->
+        <!--fresco:pressedStateOverlayImage="@color/white"-->
+
+        <!--fresco:roundTopLeft="true"-->
+        <!--fresco:roundAsCircle="false"-->
+        <!--fresco:roundTopRight="false"-->
+        <!--fresco:roundBottomLeft="false"-->
+        <!--fresco:roundBottomRight="true"-->
+        <!--android:layout_height="@dimen/card_image_height"-->
+        <!--fresco:roundedCornerRadius="31dp"-->
+        <!--fresco:viewAspectRatio="1.33"-->
+        <!--fresco:roundWithOverlayColor="@color/image_retrying"-->
+        <!--fresco:roundingBorderWidth="2dp"-->
+        <!--fresco:roundingBorderColor="@color/image_progress_bar"-->
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_title_height"
+            android:layout_alignBottom="@+id/instr.image"
+            android:layout_marginLeft="@dimen/md_keylines"
+            android:text="@string/item.title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/instr.image"
+            android:layout_marginBottom="@dimen/md_keylines"
+            android:layout_marginLeft="@dimen/md_keylines"
+            android:layout_marginRight="@dimen/md_keylines"
+            android:layout_marginTop="@dimen/md_keylines"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/item.desc"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/article_subheading" />
+
+        <Button
+            android:id="@+id/action_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/desc"
+            android:text="Action"
+            android:textColor="?attr/colorPrimary" />
+
+        <ImageButton
+            android:id="@+id/share_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="@dimen/cards_button_width"
+            android:layout_height="@dimen/cards_button_height"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/desc"
+            android:layout_marginRight="@dimen/md_keylines"
+            android:src="@drawable/ic_share_black_24dp"
+            android:tint="@color/button_grey" />
+
+        <ImageButton
+            android:id="@+id/favorite_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="@dimen/cards_button_width"
+            android:layout_height="@dimen/cards_button_height"
+            android:layout_below="@+id/desc"
+            android:layout_marginRight="@dimen/md_keylines"
+            android:layout_toLeftOf="@id/share_button"
+            android:src="@drawable/ic_favorite_black_24dp"
+            android:tint="@color/button_grey" />
+    </RelativeLayout>
+    >
+</android.support.v7.widget.CardView>

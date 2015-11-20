@@ -2,7 +2,7 @@
  * Copyright (C) 2015 Seagate LLC
  */
 
-package com.seagate.alto;
+package com.seagate.alto.pages;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.example.android.alto.R;
+import com.seagate.alto.DetailActivity;
+import com.seagate.alto.MainActivity;
+import com.seagate.alto.R;
 
 /**
  * Provides UI for the view with Cards.
@@ -25,14 +27,16 @@ import com.example.android.alto.R;
 public class CardContentFragment extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(
-                R.layout.recycler_view, container, false);
-        ContentAdapter adapter = new ContentAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        ((MainActivity)getActivity()).setAdapter();
+
+        if (recyclerView.getAdapter() == null) {
+            ContentAdapter adapter = new ContentAdapter();
+            recyclerView.setAdapter(adapter);
+        }
         return recyclerView;
     }
 

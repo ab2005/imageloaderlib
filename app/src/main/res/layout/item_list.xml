@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/md_keylines"
         android:layout_toRightOf="@+id/list_avatar"
-        android:text="@string/item_title"
+        android:text="@string/item.title"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/article_subheading" />
 
@@ -48,7 +48,7 @@
         android:textColor="@color/medium_grey"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="@string/item_desc"
+        android:text="@string/item.desc"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/list_body" />
 </RelativeLayout>

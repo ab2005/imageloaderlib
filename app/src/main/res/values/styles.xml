@@ -1,18 +1,5 @@
-<!--
-  ~ Copyright (C) 2015 The Android Open Source Project
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
@@ -25,4 +12,27 @@
         <!-- Blue -->
     </style>
     <style name="AppTheme" parent="AppTheme.Base"></style>
+    <!--<style name="FrescoImageHolder">-->
+        <!--<item name="fresco:fadeDuration">300</item>-->
+        <!--<item name="fresco:actualImageScaleType">focusCrop</item>-->
+        <!--<item name="fresco:placeholderImage">@color/image_placeholder</item>-->
+        <!--<item name="fresco:placeholderImageScaleType">fitCenter</item>-->
+        <!--<item name="fresco:failureImage">@color/image_error</item>-->
+        <!--<item name="fresco:failureImageScaleType">centerInside</item>-->
+        <!--<item name="fresco:retryImage">@color/image_retrying</item>-->
+        <!--<item name="fresco:retryImageScaleType">centerCrop</item>-->
+        <!--<item name="fresco:progressBarImage">@color/image_progress_bar</item>-->
+        <!--<item name="fresco:progressBarImageScaleType">centerInside</item>-->
+        <!--<item name="fresco:progressBarAutoRotateInterval">1000</item>-->
+        <!--<item name="fresco:pressedStateOverlayImage">@color/white</item>-->
+        <!--<item name="fresco:roundAsCircle">false</item>-->
+        <!--<item name="fresco:roundedCornerRadius">1dp</item>-->
+        <!--<item name="fresco:roundTopLeft">true</item>-->
+        <!--<item name="fresco:roundTopRight">false</item>-->
+        <!--<item name="fresco:roundBottomLeft">false</item>-->
+        <!--<item name="fresco:roundBottomRight">true</item>-->
+        <!--<item name="fresco:roundWithOverlayColor">@color/image_error</item>-->
+        <!--<item name="fresco:roundingBorderWidth">2dp</item>-->
+        <!--<item name="fresco:roundingBorderColor">@color/image_progress_bar</item>-->
+    <!--</style>-->
 </resources>

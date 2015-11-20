@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/tile_padding">
+
+    <com.seagate.alto.comparison.instrumentation.InstrumentedDraweeView
+        android:id="@+id/instr.image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tile_height"
+        fresco:fadeDuration="300"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@color/image_placeholder"
+        fresco:placeholderImageScaleType="fitCenter"
+        fresco:failureImage="@color/image_error"
+        fresco:failureImageScaleType="centerInside"
+        fresco:retryImage="@color/image_retrying"
+        fresco:retryImageScaleType="centerCrop"
+        />
+    <!--fresco:progressBarImage="@color/image_progress_bar"-->
+    <!--fresco:progressBarImageScaleType="centerInside"-->
+    <!--fresco:progressBarAutoRotateInterval="1000"-->
+    <!--fresco:pressedStateOverlayImage="@color/white"-->
+
+
+    <!--fresco:roundTopLeft="true"-->
+    <!--fresco:roundAsCircle="false"-->
+    <!--fresco:roundTopRight="false"-->
+    <!--fresco:roundBottomLeft="false"-->
+    <!--fresco:roundBottomRight="true"-->
+    <!--android:layout_height="@dimen/card_image_height"-->
+    <!--fresco:roundedCornerRadius="31dp"-->
+    <!--fresco:viewAspectRatio="1.33"-->
+    <!--fresco:roundWithOverlayColor="@color/image_retrying"-->
+    <!--fresco:roundingBorderWidth="2dp"-->
+    <!--fresco:roundingBorderColor="@color/image_progress_bar"-->
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tile_height"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/item.title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/article_titles" />
+</RelativeLayout>
