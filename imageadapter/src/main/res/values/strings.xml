@@ -1,0 +1,4 @@
+<resources>
+    <string name="lib_name">Pluggabe Image Adapter LIbrary</string>
+    <string name="adapter_delegate_key_url">key_data</string>
+</resources>

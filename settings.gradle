@@ -2,4 +2,4 @@
  * Copyright (C) 2015 Seagate LLC
  */
 
-include ':app'
+include ':app', ':imageadapter'

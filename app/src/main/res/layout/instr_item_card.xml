@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.seagate.alto.comparison.instrumentation.InstrumentedImageView
+        <com.seagate.imageadapter.instrumentation.InstrumentedImageView
             android:id="@+id/instr.image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/card_height" />

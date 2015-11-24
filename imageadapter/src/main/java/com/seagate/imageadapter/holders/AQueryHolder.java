@@ -1,0 +1,31 @@
+/*
+ * Copyright (C) 2015 Seagate LLC
+ */
+
+package com.seagate.imageadapter.holders;
+
+import android.content.Context;
+import android.view.View;
+
+import com.androidquery.AQuery;
+import com.seagate.imageadapter.instrumentation.InstrumentedImageView;
+import com.seagate.imageadapter.instrumentation.PerfListener;
+
+/**
+ * This is the Holder class for the RecycleView to use with Android Query
+ */
+public class AQueryHolder extends BaseViewHolder<InstrumentedImageView> {
+
+    private final AQuery mAQuery;
+
+    public AQueryHolder(Context context, AQuery aQuery, View parentView,
+            InstrumentedImageView instrumentedImageView, PerfListener perfListener) {
+        super(context, parentView, instrumentedImageView, perfListener);
+        mAQuery = aQuery;
+    }
+
+    @Override
+    protected void onBind(String uri) {
+        mAQuery.id(mImageView).image(uri);
+    }
+}

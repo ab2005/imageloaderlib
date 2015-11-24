@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="@dimen/md_keylines">
 
-    <com.seagate.alto.comparison.instrumentation.InstrumentedDraweeView
+    <com.seagate.imageadapter.instrumentation.InstrumentedDraweeView
         android:id="@+id/instr.image"
         android:layout_width="@dimen/avator_size"
         android:layout_height="@dimen/avator_size"

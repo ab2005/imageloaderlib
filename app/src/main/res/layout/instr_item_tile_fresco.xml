@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="@dimen/tile_padding">
 
-    <com.seagate.alto.comparison.instrumentation.InstrumentedDraweeView
+    <com.seagate.imageadapter.instrumentation.InstrumentedDraweeView
         android:id="@+id/instr.image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/tile_height"
