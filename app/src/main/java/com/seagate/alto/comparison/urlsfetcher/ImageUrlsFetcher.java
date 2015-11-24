@@ -3,6 +3,7 @@ package com.seagate.alto.comparison.urlsfetcher;
 
 import android.os.AsyncTask;
 
+import com.facebook.stetho.urlconnection.StethoURLConnectionManager;
 import com.seagate.alto.comparison.instrumentation.Preconditions;
 import com.seagate.alto.comparison.logging.FLog;
 
@@ -87,6 +88,7 @@ public class ImageUrlsFetcher {
     @Nullable
     private static String downloadContentAsString(String urlString) throws IOException {
         InputStream is = null;
+        StethoURLConnectionManager stethoManager = null;
         try {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -95,15 +97,30 @@ public class ImageUrlsFetcher {
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
+
+            stethoManager = new StethoURLConnectionManager(url.toString());
+            stethoManager.preConnect(conn, null);
+
             // Starts the query
             conn.connect();
+
+            stethoManager.postConnect();
+
             int response = conn.getResponseCode();
             if (response != HttpURLConnection.HTTP_OK) {
                 FLog.e(TAG, "Album request returned %s", response);
                 return null;
             }
             is = conn.getInputStream();
+
+            stethoManager.interpretResponseStream(is);
+
             return readAsString(is);
+        } catch (IOException e) {
+            if (stethoManager != null) {
+                stethoManager.httpExchangeFailed(e);
+            }
+            throw e;
         } finally {
             if (is != null) {
                 is.close();
