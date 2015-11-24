@@ -20,7 +20,13 @@ android {
         lintOptions {
             abortOnError false
         }
+
+        dataBinding {
+            enabled = true
+        }
     }
+
+
 }
 
 dependencies {
@@ -44,4 +50,5 @@ dependencies {
     compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
     compile 'com.facebook.stetho:stetho-urlconnection:1.2.0'
     compile 'com.facebook.stetho:stetho-js-rhino:1.2.0'
+
 }
