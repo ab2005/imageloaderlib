@@ -2,7 +2,11 @@
 
 Image Loader Adapter Library is a wrapper on top of RecyclerView.Adapter
 providing a simple unified interface to the most popular image loaders:
-[Fresco](http://frescolib.org/index.html), [Picasso](http://square.github.io/picasso/), Universal Image Loader, Glide, AQuery and Volley.
+[Fresco](http://frescolib.org/index.html), [Picasso](http://square.github.io/picasso/),
+[UniversalImageLoader](https://github.com/nostra13/Android-Universal-Image-Loader), 
+[Glide](https://github.com/bumptech/glide), [AQuery](https://code.google.com/p/android-query/wiki/ImageLoading)
+and [Volley](http://developer.android.com/training/volley/index.html).
+Some discussion about comparing different image loaders could be found [here](http://stackoverflow.com/questions/29363321/picasso-v-s-imageloader-v-s-fresco-vs-glide).
 
 In addition to the option of dynamically selecting the underlying image loader
 at the runtime the Image Loader Adapter Library allows:
