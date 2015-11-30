@@ -15,9 +15,9 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
 /**
  * RecyclerView Adapter for Volley using Drawee
  */
-public class VolleyDraweeAdapter extends ImageListAdapter {
+public class VolleyDraweeAdapter extends Adapter {
 
-    public VolleyDraweeAdapter(Context context, PerfListener perfListener, AdapterDelegate delegate) {
+    public VolleyDraweeAdapter(Context context, PerfListener perfListener, Delegate delegate) {
         super(context, perfListener, delegate);
         final VolleyDraweeControllerBuilderSupplier supplier =
                 new VolleyDraweeControllerBuilderSupplier(
@@ -42,7 +42,7 @@ public class VolleyDraweeAdapter extends ImageListAdapter {
     }
 
     @Override
-    public void shutDown() {
+    public void dispose() {
         super.clear();
         InstrumentedDraweeView.shutDown();
         SampleVolleyFactory.getMemoryCache().clear();

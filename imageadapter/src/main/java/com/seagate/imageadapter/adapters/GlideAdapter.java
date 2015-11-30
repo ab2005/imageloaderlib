@@ -14,9 +14,9 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
 /**
  * RecyclerView Adapter for Glide
  */
-public class GlideAdapter extends ImageListAdapter {
+public class GlideAdapter extends Adapter {
 
-  public GlideAdapter(Context context, PerfListener perfListener, AdapterDelegate delegate) {
+  public GlideAdapter(Context context, PerfListener perfListener, Delegate delegate) {
     super(context, perfListener, delegate);
   }
 
@@ -28,7 +28,7 @@ public class GlideAdapter extends ImageListAdapter {
   }
 
   @Override
-  public void shutDown() {
+  public void dispose() {
     Glide.get(getContext()).clearMemory();
   }
 }

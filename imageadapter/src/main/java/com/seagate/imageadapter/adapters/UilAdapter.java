@@ -15,11 +15,11 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
 /**
  * RecyclerView Adapter for Universal ImageLoader
  */
-public class UilAdapter extends ImageListAdapter {
+public class UilAdapter extends Adapter {
 
   private final ImageLoader mImageLoader;
 
-  public UilAdapter(Context context, PerfListener perfListener, AdapterDelegate delegate) {
+  public UilAdapter(Context context, PerfListener perfListener, Delegate delegate) {
     super(context, perfListener, delegate);
     mImageLoader = SampleUilFactory.getImageLoader(context);
   }
@@ -32,7 +32,7 @@ public class UilAdapter extends ImageListAdapter {
   }
 
   @Override
-  public void shutDown() {
+  public void dispose() {
     super.clear();
     mImageLoader.clearMemoryCache();
   }

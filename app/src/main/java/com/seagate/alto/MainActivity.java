@@ -30,6 +30,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,26 +38,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.common.logging.FLog;
-import com.seagate.imageadapter.Drawables;
-import com.seagate.imageadapter.adapters.AQueryAdapter;
-import com.seagate.imageadapter.adapters.AdapterDelegate;
-import com.seagate.imageadapter.adapters.FrescoAdapter;
-import com.seagate.imageadapter.adapters.GlideAdapter;
-import com.seagate.imageadapter.adapters.ImageListAdapter;
-import com.seagate.imageadapter.adapters.PicassoAdapter;
-import com.seagate.imageadapter.adapters.UilAdapter;
-import com.seagate.imageadapter.adapters.VolleyAdapter;
-import com.seagate.imageadapter.adapters.VolleyDraweeAdapter;
-import com.seagate.imageadapter.configs.imagepipeline.ImagePipelineConfigFactory;
+import com.seagate.alto.pages.CardContentFragment;
+import com.seagate.alto.pages.ListContentFragment;
+import com.seagate.alto.pages.SettingsActivity;
+import com.seagate.alto.pages.TileContentFragment;
+import com.seagate.imageadapter.adapters.Adapter;
 import com.seagate.imageadapter.instrumentation.PerfListener;
 import com.seagate.imageadapter.urlsfetcher.ImageFormat;
 import com.seagate.imageadapter.urlsfetcher.ImageSize;
 import com.seagate.imageadapter.urlsfetcher.ImageUrlsFetcher;
 import com.seagate.imageadapter.urlsfetcher.ImageUrlsRequestBuilder;
-import com.seagate.alto.pages.CardContentFragment;
-import com.seagate.alto.pages.ListContentFragment;
-import com.seagate.alto.pages.SettingsActivity;
-import com.seagate.alto.pages.TileContentFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private int mCurrentLoaderAdapterIndex;
     private int mCurrentSourceAdapterIndex;
 
-    private ImageListAdapter mCurrentAdapter;
+    private Adapter mCurrentAdapter;
     private RecyclerView mRecyclerView;
 
     private List<String> mImageUrls = new ArrayList<>();
@@ -107,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Drawables.init(getResources());
 
         setContentView(R.layout.activity_main);
 
@@ -319,7 +308,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private ImageListAdapter getImageListAdapter(int pageIndex, int loaderId, final PerfListener pl) {
+    private Adapter getImageListAdapter(int pageIndex, int loaderId, final PerfListener pl) {
+
+
         boolean useDrawee = (loaderId == R.id.action_image_loader_fresco || loaderId == R.id.action_image_loader_fresco_okhttp);
         int[] layouts = {R.layout.instr_item_tile, R.layout.instr_item_card, R.layout.instr_item_list};
         int[] frescoLayouts = {R.layout.instr_item_tile_fresco, R.layout.instr_item_card_fresco, R.layout.instr_item_list_fresco};
@@ -332,43 +323,69 @@ public class MainActivity extends AppCompatActivity {
             layoutId = useDrawee ? frescoLayouts[pageIndex] : layouts[pageIndex];
         }
 
-        AdapterDelegate ad = new AdapterDelegate() {
+        Adapter.Delegate ad = new Adapter.Delegate() {
             public ViewGroup getHolderView(ViewGroup parent, int viewType) {
-                View view = getLayoutInflater().inflate(layoutId, parent, false );
+                int w = parent.getWidth();
+                int h = parent.getHeight();
+                ViewGroup.LayoutParams lp = parent.getLayoutParams();
+                int wp = lp.width;
+                int hp = lp.height;
+                final View view = getLayoutInflater().inflate(layoutId, parent, false );
                 // TODO: set the view's size, margins, paddings and layout parameters
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, DetailActivity.class);
-                        String url = v.getTag(AdapterDelegate.KEY_DATA).toString();
-                        intent.putExtra(AdapterDelegate.EXTRA_KEY_DATA, url);
+                        String url = view.getTag(getImageViewId()) + "";
+                        intent.putExtra("EXTRA_KEY_URL", url);
                         context.startActivity(intent);
                     }
                 });
                 return (ViewGroup) view;
             }
+
+            @Override
+            public int getImageViewId() {
+                return R.id.instr_image;
+            }
+
+            @Override
+            public void bind(View itemView, String url) {
+                itemView.setTag(getImageViewId(), url);
+            }
+
+            @Override
+            public Context getContext() {
+                return MainActivity.this;
+            }
+
+            @Override
+            public PerfListener getPerformanceListener() {
+                return mPerfListener;
+            }
         };
 
+        int type;
         switch (loaderId) {
             case R.id.action_image_loader_fresco:
-                return new FrescoAdapter(this, pl, ImagePipelineConfigFactory.getImagePipelineConfig(this), ad);
+                return Adapter.buildAdapter(Adapter.FRESCO, ad);
             case R.id.action_image_loader_fresco_okhttp:
-                return new FrescoAdapter(this, pl, ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this), ad);
+                return Adapter.buildAdapter(Adapter.FRESCO_OKHTTP, ad);
             case R.id.action_image_loader_glide:
-                return new GlideAdapter(this, pl, ad);
+                return Adapter.buildAdapter(Adapter.GLIDE, ad);
             case R.id.action_image_loader_picasso:
-                return new PicassoAdapter(this, pl, ad);
+                return Adapter.buildAdapter(Adapter.PICASSO, ad);
             case R.id.action_image_loader_uil:
-                return new UilAdapter(this, pl, ad);
+                return Adapter.buildAdapter(Adapter.UNIVERSAL_IMAGE_LIBRARY, ad);
             case R.id.action_image_loader_volley:
-                return mUseDrawee ?
-                        new VolleyDraweeAdapter(this, pl, ad) :
-                        new VolleyAdapter(this, pl, ad);
+                return Adapter.buildAdapter(Adapter.VOLLEY, ad);
+            case R.id.action_image_loader_volley_drawee:
+                return Adapter.buildAdapter(Adapter.VOLLEY_DRAWEE, ad);
             case R.id.action_image_loader_aquery:
-                return new AQueryAdapter(this, pl, ad);
+                return Adapter.buildAdapter(Adapter.ANDROID_QUERY, ad);
             default:
-                return null;
+                throw new IllegalArgumentException("Invalid adaper type");
         }
     }
 
@@ -399,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetAdapter() {
         if (mCurrentAdapter != null) {
-            mCurrentAdapter.shutDown();
+            mCurrentAdapter.dispose();
             mCurrentAdapter = null;
             System.gc();
             System.runFinalization();
@@ -552,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
                 mImageUrls.add(imageUri.toString());
             }
         } catch (Throwable t) {
-            FLog.e(TAG, "" + t.getMessage());
+            Log.e(TAG, "" + t.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -593,5 +610,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return ImageSize.ORIGINAL_IMAGE;
         }
+    }
+
+    public RecyclerView.Adapter getCurrentAdaper() {
+        return mCurrentAdapter;
     }
 }

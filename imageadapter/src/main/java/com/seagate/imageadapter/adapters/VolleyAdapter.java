@@ -15,11 +15,11 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
 /**
  * RecyclerView Adapter for Volley
  */
-public class VolleyAdapter extends ImageListAdapter {
+public class VolleyAdapter extends Adapter {
 
     private final ImageLoader mImageLoader;
 
-    public VolleyAdapter(Context context, PerfListener perfListener, AdapterDelegate delegate) {
+    public VolleyAdapter(Context context, PerfListener perfListener, Delegate delegate) {
         super(context, perfListener, delegate);
         mImageLoader = SampleVolleyFactory.getImageLoader(context);
     }
@@ -32,7 +32,7 @@ public class VolleyAdapter extends ImageListAdapter {
     }
 
     @Override
-    public void shutDown() {
+    public void dispose() {
         super.clear();
         SampleVolleyFactory.getMemoryCache().clear();
     }

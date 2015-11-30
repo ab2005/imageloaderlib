@@ -13,10 +13,10 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
 /**
  * RecyclerView Adapter for Android Query
  */
-public class AQueryAdapter extends ImageListAdapter {
+public class AQueryAdapter extends Adapter {
     private AQuery mAQuery;
 
-    public AQueryAdapter(Context context, PerfListener perfListener, AdapterDelegate delegate) {
+    public AQueryAdapter(Context context, PerfListener perfListener, Delegate delegate) {
         super(context, perfListener, delegate);
         mAQuery = new AQuery(context);
     }
@@ -29,7 +29,7 @@ public class AQueryAdapter extends ImageListAdapter {
     }
 
     @Override
-    public void shutDown() {
+    public void dispose() {
         for (int i = 0; i < getItemCount(); i++) {
             String uri = getItem(i);
             mAQuery.invalidate(uri);

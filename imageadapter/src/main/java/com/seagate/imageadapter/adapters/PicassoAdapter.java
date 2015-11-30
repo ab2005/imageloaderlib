@@ -15,11 +15,11 @@ import com.squareup.picasso.Picasso;
 /**
  * RecyclerView Adapter for Picasso
  */
-public class PicassoAdapter extends ImageListAdapter {
+public class PicassoAdapter extends Adapter {
 
   private final Picasso mPicasso;
 
-  public PicassoAdapter(Context context, PerfListener perfListener, AdapterDelegate delegate) {
+  public PicassoAdapter(Context context, PerfListener perfListener, Delegate delegate) {
     super(context, perfListener, delegate);
     mPicasso = SamplePicassoFactory.getPicasso(context);
   }
@@ -32,7 +32,7 @@ public class PicassoAdapter extends ImageListAdapter {
   }
 
   @Override
-  public void shutDown() {
+  public void dispose() {
     for (int i = 0; i < getItemCount(); i++) {
       String uri = getItem(i);
       mPicasso.invalidate(uri);

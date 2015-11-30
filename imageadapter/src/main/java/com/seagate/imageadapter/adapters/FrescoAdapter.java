@@ -15,30 +15,22 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
 /**
  * RecyclerView Adapter for Fresco
  */
-public class FrescoAdapter extends ImageListAdapter {
+public class FrescoAdapter extends Adapter {
 
-    public FrescoAdapter(Context context, PerfListener perfListener, ImagePipelineConfig imagePipelineConfig, AdapterDelegate ad) {
+    public FrescoAdapter(Context context, PerfListener perfListener, ImagePipelineConfig imagePipelineConfig, Delegate ad) {
         super(context, perfListener, ad);
         Fresco.initialize(context, imagePipelineConfig);
     }
 
     @Override
     public BaseViewHolder<?> onCreateViewHolder(ViewGroup parent, int viewType) {
-//        GenericDraweeHierarchy gdh = new GenericDraweeHierarchyBuilder(getContext().getResources())
-//                .setPlaceholderImage(Drawables.sPlaceholderDrawable)
-//                .setFailureImage(Drawables.sErrorDrawable)
-//                .setProgressBarImage(new ProgressBarDrawable())
-//                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-//                .build();
-//        final InstrumentedDraweeView instrView = new InstrumentedDraweeView(getContext(), gdh);
-
         View holderView = getDelegate().getHolderView(parent, viewType);
         final InstrumentedDraweeView instrView = (InstrumentedDraweeView) super.getInstrumentedView(holderView);
         return new FrescoHolder(getContext(), holderView, instrView, getPerfListener());
     }
 
     @Override
-    public void shutDown() {
+    public void dispose() {
         Fresco.shutDown();
     }
 }

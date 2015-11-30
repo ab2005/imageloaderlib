@@ -26,6 +26,7 @@
                 <item android:id="@+id/action.image.loader.uil" android:title="@string/image.loader.uil" />
                 <item android:id="@+id/action.image.loader.aquery" android:title="@string/image.loader.aquery" />
                 <item android:id="@+id/action.image.loader.volley" android:title="@string/image.loader.volley" />
+                <item android:id="@+id/action.image.loader.volley.drawee" android:title="@string/image.loader.volley.drawee" />
             </group>
         </menu>
     </item>

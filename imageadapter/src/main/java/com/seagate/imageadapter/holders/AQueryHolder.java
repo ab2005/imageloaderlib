@@ -15,7 +15,6 @@ import com.seagate.imageadapter.instrumentation.PerfListener;
  * This is the Holder class for the RecycleView to use with Android Query
  */
 public class AQueryHolder extends BaseViewHolder<InstrumentedImageView> {
-
     private final AQuery mAQuery;
 
     public AQueryHolder(Context context, AQuery aQuery, View parentView,

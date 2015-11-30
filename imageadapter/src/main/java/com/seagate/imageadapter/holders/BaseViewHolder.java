@@ -9,10 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.seagate.imageadapter.R;
-import com.seagate.imageadapter.adapters.AdapterDelegate;
 import com.seagate.imageadapter.instrumentation.Instrumented;
 import com.seagate.imageadapter.instrumentation.PerfListener;
 
@@ -24,8 +21,6 @@ public abstract class BaseViewHolder<V extends View & Instrumented> extends Recy
     private final View mParentView;
     protected final V mImageView;
     private Context mContext;
-//    private TextView mTitle;
-//    private TextView mDesc;
 
     /**
      * @param parentView - list item container
@@ -37,22 +32,14 @@ public abstract class BaseViewHolder<V extends View & Instrumented> extends Recy
         this.mPerfListener = perfListener;
         this.mParentView = parentView;
         this.mImageView = imageView;
-//        mTitle = (TextView) parentView.findViewById(R.id.title);
-//        mDesc = (TextView) parentView.findViewById(R.id.desc);
 //        int size = calcDesiredSize(mParentView.getWidth(), mParentView.getHeight());
 //        updateViewLayoutParams(mImageView, size, size);
     }
 
     // Called from Adapter #link: onBindViewHolder() to provide data for the view
     public void bind(String model) {
-//        if (mTitle != null) {
-//            mTitle.setText(model.substring(model.lastIndexOf("/") + 1, model.length()));
-//        }
-//        if (mDesc != null) {
-//            mDesc.setText(model);
-//        }
         mImageView.initInstrumentation(model.toString(), mPerfListener);
-        itemView.setTag(AdapterDelegate.KEY_DATA, model);
+        //itemView.setTag(Adapter.Delegate.KEY_DATA, model);
         onBind(model);
     }
 

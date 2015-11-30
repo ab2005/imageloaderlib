@@ -19,7 +19,7 @@ import com.facebook.drawee.components.DeferredReleaser;
 import java.util.concurrent.Executor;
 
 /**
- * Factory for Volley Drawee controllers.
+ * Drawees for Volley Drawee controllers.
  */
 public class VolleyDraweeControllerFactory {
 

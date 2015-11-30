@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.seagate.imageadapter.Drawables;
+import com.seagate.imageadapter.Drawees;
 
 
 /**
@@ -64,9 +64,9 @@ public class InstrumentedImageView extends ImageView implements Instrumented {
         if (drawable == null) {// AQuery preset drawable to be null if not found in cache
             return;
         }
-        if (drawable == Drawables.sPlaceholderDrawable) {
+        if (drawable == Drawees.sPlaceholderDrawable) {
             // ignore
-        } else if (drawable == Drawables.sErrorDrawable) {
+        } else if (drawable == Drawees.sErrorDrawable) {
             mInstrumentation.onFailure();
         } else {
             // TODO: measure drawable size

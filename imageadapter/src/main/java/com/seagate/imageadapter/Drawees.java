@@ -4,21 +4,29 @@
 
 package com.seagate.imageadapter;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
+import com.facebook.stetho.Stetho;
+
 
 /**
- * Holds static drawables used in the app.
+ * <p> Holds static context for the library.
  * <p/>
  * <p> Using static set of drawables allows us to easily determine state of image request
  * by simply looking what kind of drawable is passed to image view.
  */
-public class Drawables {
+public class Drawees {
     public static Drawable sPlaceholderDrawable;
     public static Drawable sErrorDrawable;
 
-    public static void init(final Resources resources) {
+    public static void initializeWithDefaults(Context ctx) {
+        Stetho.initializeWithDefaults(ctx);
+        init(ctx.getResources());
+    }
+
+    private static void init(final Resources resources) {
         if (sPlaceholderDrawable == null) {
             sPlaceholderDrawable = resources.getDrawable(R.color.image_placeholder);
         }
@@ -27,4 +35,6 @@ public class Drawables {
             sErrorDrawable = resources.getDrawable(R.color.image_error);
         }
     }
+
+
 }

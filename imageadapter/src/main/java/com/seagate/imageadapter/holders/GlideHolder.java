@@ -5,7 +5,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.seagate.imageadapter.Drawables;
+import com.seagate.imageadapter.Drawees;
 import com.seagate.imageadapter.instrumentation.InstrumentedImageView;
 import com.seagate.imageadapter.instrumentation.PerfListener;
 
@@ -25,8 +25,8 @@ public class GlideHolder extends BaseViewHolder<InstrumentedImageView> {
     protected void onBind(String uri) {
         Glide.with(mImageView.getContext())
                 .load(uri)
-                .placeholder(Drawables.sPlaceholderDrawable)
-                .error(Drawables.sErrorDrawable)
+                .placeholder(Drawees.sPlaceholderDrawable)
+                .error(Drawees.sErrorDrawable)
                 .crossFade()
                 .into(mImageView);
     }

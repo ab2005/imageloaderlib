@@ -4,7 +4,7 @@ package com.seagate.imageadapter.holders;
 import android.content.Context;
 import android.view.View;
 
-import com.seagate.imageadapter.Drawables;
+import com.seagate.imageadapter.Drawees;
 import com.seagate.imageadapter.instrumentation.InstrumentedImageView;
 import com.seagate.imageadapter.instrumentation.PerfListener;
 import com.squareup.picasso.Picasso;
@@ -26,8 +26,8 @@ public class PicassoHolder extends BaseViewHolder<InstrumentedImageView> {
     @Override
     protected void onBind(String uri) {
         mPicasso.load(uri)
-                .placeholder(Drawables.sPlaceholderDrawable)
-                .error(Drawables.sErrorDrawable)
+                .placeholder(Drawees.sPlaceholderDrawable)
+                .error(Drawees.sErrorDrawable)
                 .fit()
                 .into(mImageView);
     }

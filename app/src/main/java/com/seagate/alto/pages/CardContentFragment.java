@@ -34,7 +34,10 @@ public class CardContentFragment extends Fragment {
         ((MainActivity)getActivity()).setAdapter();
 
         if (recyclerView.getAdapter() == null) {
-            ContentAdapter adapter = new ContentAdapter();
+            RecyclerView.Adapter adapter = ((MainActivity)getActivity()).getCurrentAdaper();
+            if (adapter == null) {
+                adapter = new ContentAdapter();
+            }
             recyclerView.setAdapter(adapter);
         }
         return recyclerView;

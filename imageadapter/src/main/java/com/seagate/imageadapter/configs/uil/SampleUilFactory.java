@@ -6,7 +6,7 @@ import android.content.Context;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.seagate.imageadapter.Drawables;
+import com.seagate.imageadapter.Drawees;
 import com.seagate.imageadapter.configs.ConfigConstants;
 
 
@@ -20,8 +20,8 @@ public class SampleUilFactory {
   public static ImageLoader getImageLoader(Context context) {
     if (sImageLoader == null) {
       DisplayImageOptions displayImageOptions = new DisplayImageOptions.Builder()
-          .showImageOnLoading(Drawables.sPlaceholderDrawable)
-          .showImageOnFail(Drawables.sErrorDrawable)
+          .showImageOnLoading(Drawees.sPlaceholderDrawable)
+          .showImageOnFail(Drawees.sErrorDrawable)
           .cacheInMemory(true)
           .cacheOnDisk(true)
           .build();

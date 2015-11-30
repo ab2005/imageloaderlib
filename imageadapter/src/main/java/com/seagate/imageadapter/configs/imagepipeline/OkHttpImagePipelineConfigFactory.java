@@ -7,7 +7,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.squareup.okhttp.OkHttpClient;
 
 /**
- * Factory for getting an {@link com.facebook.imagepipeline.core.ImagePipelineConfig} that uses
+ * Drawees for getting an {@link com.facebook.imagepipeline.core.ImagePipelineConfig} that uses
  */
 public class OkHttpImagePipelineConfigFactory {
 
