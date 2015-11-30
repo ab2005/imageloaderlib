@@ -6,20 +6,25 @@ Fresco, Picasso, Universal Image Loader, Glide, AQuery and Volley.
 
 In addition to the option of dynamically selecting the underlying image loader
 at the runtime the Image Loader Adapter Library allows:
-- detailed performance profiling including native and java heap usage, average image load time,
+* detailed performance profiling including native and java heap usage, average image load time,
 number of successful, pending and canceled network requests
-- custom debug painting
-- convenient application debugging of the application using Chrome browser Developers Tools
+* custom debug painting
+* convenient application debugging of the application using Chrome browser Developers Tools
+
 
 ## Requirements
+
 Image Loader Adapter Library can be included in any Android application.
 The library supports Android API Level: 16 Android 4.1 (JELLY_BEAN) and later.
+
+
 ## Setup
-To use Image Loader Library copy the archive file to the libs folder
-and include the following into the repositories and dependencies sections
+
+To use the Image Loader Adapter Library you need to copy the library archive
+file to the libs folder and include the following into the repositories and dependencies sections
 of your <code>build.graddle</code> file:
 
-```
+```javascript
 repositories {
 ...
     flatDir {
@@ -40,18 +45,19 @@ Alternatively you can simple add the following line to the dependencies section 
 
 ## Getting Started
 
-### Provide permissions
+### Providing application permissions
+
 For images from the network, you will need to request Internet permission
 from your users. Add this line to your AndroidManifest.xml file:
-```Android
+```
   <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
-### Initilaize the library
+### Initilaizing the library
+
 Near your application startup, before your app calls setContentView(),
 initialize the Image Loader Adapter Library.
-You should only call initialize once. Your Application class would be a good place.
-
+You should only call initialize once. The Application class would be a good place.
 
 ```java
 import android.app.Application;
@@ -66,13 +72,20 @@ public class MainApplication extends Application {
 }
 ```
 
-### Use custom image views
-The library provides two custom image view classes to use in the xml layouts:
-- InstrumentedDraweeView for use with Fresco library
-- InstrumentedImageView for all other libraries
+### Defining layout with instrumented image views
 
-To use Fresco add a custom namespace to the top-level element of the xml layout:
+The library provides two customized image view classes to use in the xml layouts:
+
+* InstrumentedDraweeView for use with Fresco library
+* InstrumentedImageView for all other libraries
+
+When defining view layout to use with the Fresco image loader you need to add a custom namespace to the
+top-level element of the xml layout and define the attributes of the
+`com.seagate.imageadapter.instrumentation.InstrumentedDraweeView` such as:
+
+
 ```xml
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -98,9 +111,10 @@ To use Fresco add a custom namespace to the top-level element of the xml layout:
         fresco:roundAsCircle="true"/>
 ```
 
-For other libraries:
+To define layout for all other image loaders use `com.seagate.imageadapter.instrumentation.InstrumentedImageView` class:
 
 ```xml
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -112,11 +126,14 @@ For other libraries:
         android:layout_height="@dimen/avator_size"/>
 ```
 
-### Define Adapter Delegate
 
-To build an image loader adapter you have to provide an instance of the
+### Creating Adapter Delegate
+
+To obtain an instance of the image loader adapter you need to provide an instance of the
 Adapter.Delegate:
-``` java
+
+
+```java
 private final PerformanceListener profiler = new PerformanceListener();
 
 Adapter.Delegate delegate = new Adapter.Delegate() {
@@ -149,13 +166,14 @@ Adapter.Delegate delegate = new Adapter.Delegate() {
       }
   };
 ```
-### Build Image Loader Adapter
+
+### Builing Image Loader Adapter
 
 ```java
   Adapter adapter = Adapter.build(Adapter.FRESCO);
 ```
 
-### Measure Performance
+### Collecting Performance Stats
 
 You can query the instance of your PerformanceListener to obtain the image loader stats:
 
@@ -177,10 +195,11 @@ private void updateStats() {
     mStatsDisplay.setText(message);
     Log.i(TAG, message);
 }
-
 ```
 
- ### Debug with Chrome Dev Tools
+
+### Debugging with the Chrome DevTools
+
 The integration with the Chrome DevTools frontend is implemented using a
 client/server protocol which the Stetho software provides for your application.
 Simply navigate to chrome://inspect and click "Inspect" to get started!
@@ -190,13 +209,16 @@ and exporting traces to the HAR format
 
 ![alt text](http://facebook.github.io/stetho/static/images/inspector-network.png)
 
-View hierarchy is supported! Lots of goodies such as instances virtually placed
+You application view hierarchy is supported! Lots of goodies such as instances virtually placed
  in the hierarchy, view highlighting, and the ability to tap on a view to jump
  to its position in the hierarchy.
 
+
 ## Contributions
 TODO:
+
 ## Changelog
 TODO
+
 ## License
 TODO:
