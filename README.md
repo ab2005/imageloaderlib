@@ -2,7 +2,7 @@
 
 Image Loader Adapter Library is a wrapper on top of RecyclerView.Adapter
 providing a simple unified interface to the most popular image loaders:
-Fresco, Picasso, Universal Image Loader, Glide, AQuery and Volley.
+[Fresco](http://frescolib.org/index.html), [Picasso](http://square.github.io/picasso/), Universal Image Loader, Glide, AQuery and Volley.
 
 In addition to the option of dynamically selecting the underlying image loader
 at the runtime the Image Loader Adapter Library allows:
@@ -161,7 +161,7 @@ Adapter.Delegate delegate = new Adapter.Delegate() {
   };
 ```
 
-### Builing Image Loader Adapter
+### Building Image Loader Adapter
 
 ```java
   Adapter adapter = Adapter.build(Adapter.FRESCO);
@@ -194,7 +194,7 @@ private void updateStats() {
 ### Debugging with the Chrome DevTools
 
 The integration with the Chrome DevTools frontend is implemented using a
-client/server protocol which the Stetho software provides for your application.
+client/server protocol which the [Stetho](http://facebook.github.io/stetho/) software provides for your application.
 Simply navigate to chrome://inspect and click "Inspect" to get started!
 
 ![alt text](http://facebook.github.io/stetho/static/images/inspector-discovery.png)
