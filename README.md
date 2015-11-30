@@ -6,6 +6,7 @@ Fresco, Picasso, Universal Image Loader, Glide, AQuery and Volley.
 
 In addition to the option of dynamically selecting the underlying image loader
 at the runtime the Image Loader Adapter Library allows:
+
 * detailed performance profiling including native and java heap usage, average image load time,
 number of successful, pending and canceled network requests
 * custom debug painting
@@ -26,13 +27,11 @@ of your <code>build.graddle</code> file:
 
 ```javascript
 repositories {
-...
     flatDir {
         dirs 'libs'
     }
 }
 dependencies {
-...
     compile (name:'imageadapterlib', ext:'aar')
 }
 ```
@@ -83,9 +82,7 @@ When defining view layout to use with the Fresco image loader you need to add a 
 top-level element of the xml layout and define the attributes of the
 `com.seagate.imageadapter.instrumentation.InstrumentedDraweeView` such as:
 
-
 ```xml
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -114,7 +111,6 @@ top-level element of the xml layout and define the attributes of the
 To define layout for all other image loaders use `com.seagate.imageadapter.instrumentation.InstrumentedImageView` class:
 
 ```xml
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -126,12 +122,10 @@ To define layout for all other image loaders use `com.seagate.imageadapter.instr
         android:layout_height="@dimen/avator_size"/>
 ```
 
-
 ### Creating Adapter Delegate
 
 To obtain an instance of the image loader adapter you need to provide an instance of the
 Adapter.Delegate:
-
 
 ```java
 private final PerformanceListener profiler = new PerformanceListener();
@@ -197,12 +191,13 @@ private void updateStats() {
 }
 ```
 
-
 ### Debugging with the Chrome DevTools
 
 The integration with the Chrome DevTools frontend is implemented using a
 client/server protocol which the Stetho software provides for your application.
 Simply navigate to chrome://inspect and click "Inspect" to get started!
+
+![alt text](http://facebook.github.io/stetho/static/images/inspector-discovery.png)
 
 Http Network inspection is possible with the full spectrum of Chrome Developer Tools features, including image preview, JSON response helpers,
 and exporting traces to the HAR format
