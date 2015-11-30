@@ -96,7 +96,6 @@ To use Fresco add a custom namespace to the top-level element of the xml layout:
         fresco:progressBarAutoRotateInterval="1000"
         fresco:pressedStateOverlayImage="@color/white"
         fresco:roundAsCircle="true"/>
-
 ```
 
 For other libraries:
@@ -111,14 +110,13 @@ For other libraries:
         android:id="@+id/instr.image"
         android:layout_width="@dimen/avator_size"
         android:layout_height="@dimen/avator_size"/>
-
 ```
 
 ### Define Adapter Delegate
 
 To build an image loader adapter you have to provide an instance of the
 Adapter.Delegate:
-```java
+``` java
 private final PerformanceListener profiler = new PerformanceListener();
 
 Adapter.Delegate delegate = new Adapter.Delegate() {
