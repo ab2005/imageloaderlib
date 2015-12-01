@@ -3,7 +3,7 @@
 Image Loader Adapter Library is a wrapper on top of RecyclerView.Adapter
 providing a simple unified interface to the most popular image loaders:
 [Fresco](http://frescolib.org/index.html), [Picasso](http://square.github.io/picasso/),
-[UniversalImageLoader](https://github.com/nostra13/Android-Universal-Image-Loader), 
+[UniversalImageLoader](https://github.com/nostra13/Android-Universal-Image-Loader),
 [Glide](https://github.com/bumptech/glide), [AQuery](https://code.google.com/p/android-query/wiki/ImageLoading)
 and [Volley](http://developer.android.com/training/volley/index.html).
 Some discussion about comparing different image loaders could be found [here](http://stackoverflow.com/questions/29363321/picasso-v-s-imageloader-v-s-fresco-vs-glide).
@@ -52,6 +52,7 @@ Alternatively you can simple add the following line to the dependencies section 
 
 For images from the network, you will need to request Internet permission
 from your users. Add this line to your AndroidManifest.xml file:
+
 ```
   <uses-permission android:name="android.permission.INTERNET"/>
 ```
@@ -139,7 +140,16 @@ Adapter.Delegate delegate = new Adapter.Delegate() {
       public ViewGroup getHolderView(ViewGroup parent, int viewType) {
           final View view = getLayoutInflater().inflate(layoutId, parent, false );
           // TODO: set the view's size, margins, paddings and layout parameters
-          // attach necessary event handlers...
+          // Attach necessary event handlers...
+          view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), DetailActivity.class);
+                    String url = (String)view.getTag(getImageViewId());
+                    intent.putExtra("EXTRA_KEY_IMAGE_URL", url);
+                    context.startActivity(intent);
+                }
+          });
           return (ViewGroup) view;
       }
 
@@ -165,10 +175,17 @@ Adapter.Delegate delegate = new Adapter.Delegate() {
   };
 ```
 
+It is a responsibility of the `delegate` to provide the application context,
+performance listener, create instance of the item view and report id of the
+image view. The delegate will be notified when the view is binded to the data,
+so it could perform necessary UI updates.
+
+The Performance Listener wil be called to collect performance stats.
+
 ### Building Image Loader Adapter
 
 ```java
-  Adapter adapter = Adapter.build(Adapter.FRESCO);
+  Adapter adapter = Adapter.build(Adapter.FRESCO, delegate);
 ```
 
 ### Collecting Performance Stats
@@ -195,11 +212,11 @@ private void updateStats() {
 }
 ```
 
-### Debugging with the Chrome DevTools
+### Debugging with Chrome DevTools
 
 The integration with the Chrome DevTools frontend is implemented using a
 client/server protocol which the [Stetho](http://facebook.github.io/stetho/) software provides for your application.
-Simply navigate to chrome://inspect and click "Inspect" to get started!
+Simply navigate to [chrome://inspect](chrome://inspect/#devices) and click "Inspect" to get started!
 
 ![alt text](http://facebook.github.io/stetho/static/images/inspector-discovery.png)
 
