@@ -29,19 +29,11 @@ of your <code>build.graddle</code> file:
 
 ```javascript
 repositories {
-    maven {
-        url 'https://dl.bintray.com/ab2005/maven/'
-    }
+    jcenter()
 }
 dependencies {
     compile 'com.seagate.alto:imageadapter:+'
 }
-```
-
-Alternatively you can simple add the following line to the dependencies section of your <code>build.gradle file:
-
-```javascript
-    compile 'com.seagate.alto:imageadapter:+'
 ```
 
 ## Getting Started
