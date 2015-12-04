@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/main_action_image_source_local"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:tint="@color/button_grey"
+            android:title="Local Photo Collection" />
+        <item
+            android:id="@+id/main_action_image_source_imgur"
+            android:icon="@drawable/ic_favorite_black_24dp"
+            android:tint="@color/button_grey"
+            android:title="Imgur Hot Images" />
+        <item
+            android:icon="@drawable/ic_bookmark_border_black_24dp"
+            android:tint="@color/button_grey"
+            android:title="Three" />
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:tint="@color/button_grey"
+            android:title="Settings" />
+    </group>
+</menu>

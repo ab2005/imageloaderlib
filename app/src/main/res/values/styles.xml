@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#3F51B5</item>
+        <!-- Light Indigo -->
+        <item name="colorPrimaryDark">#3949AB</item>
+        <!-- Dark Indigo -->
+        <item name="colorAccent">#00B0FF</item>
+        <!-- Blue -->
+    </style>
+    <style name="AppTheme" parent="AppTheme.Base"></style>
+    <!--<style name="FrescoImageHolder">-->
+        <!--<item name="fresco:fadeDuration">300</item>-->
+        <!--<item name="fresco:actualImageScaleType">focusCrop</item>-->
+        <!--<item name="fresco:placeholderImage">@color/image_placeholder</item>-->
+        <!--<item name="fresco:placeholderImageScaleType">fitCenter</item>-->
+        <!--<item name="fresco:failureImage">@color/image_error</item>-->
+        <!--<item name="fresco:failureImageScaleType">centerInside</item>-->
+        <!--<item name="fresco:retryImage">@color/image_retrying</item>-->
+        <!--<item name="fresco:retryImageScaleType">centerCrop</item>-->
+        <!--<item name="fresco:progressBarImage">@color/image_progress_bar</item>-->
+        <!--<item name="fresco:progressBarImageScaleType">centerInside</item>-->
+        <!--<item name="fresco:progressBarAutoRotateInterval">1000</item>-->
+        <!--<item name="fresco:pressedStateOverlayImage">@color/white</item>-->
+        <!--<item name="fresco:roundAsCircle">false</item>-->
+        <!--<item name="fresco:roundedCornerRadius">1dp</item>-->
+        <!--<item name="fresco:roundTopLeft">true</item>-->
+        <!--<item name="fresco:roundTopRight">false</item>-->
+        <!--<item name="fresco:roundBottomLeft">false</item>-->
+        <!--<item name="fresco:roundBottomRight">true</item>-->
+        <!--<item name="fresco:roundWithOverlayColor">@color/image_error</item>-->
+        <!--<item name="fresco:roundingBorderWidth">2dp</item>-->
+        <!--<item name="fresco:roundingBorderColor">@color/image_progress_bar</item>-->
+    <!--</style>-->
+</resources>

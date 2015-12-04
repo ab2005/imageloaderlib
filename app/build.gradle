@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2015 Seagate LLC
+ */
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "${BUILD_TOOLS_VERSION}"
+
+    defaultConfig {
+        applicationId "com.seagate.alto"
+        minSdkVersion 15
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+
+    android {
+        lintOptions {
+            abortOnError false
+        }
+
+        dataBinding {
+            enabled = true
+        }
+    }
+
+
+}
+
+repositories {
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    provided "com.google.code.findbugs:jsr305:${JSR_305_VERSION}"
+
+    compile "com.android.support:support-v4:${SUPPORT_VERSION}"
+    compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+    compile "com.android.support:design:${SUPPORT_VERSION}"
+    compile "com.android.support:cardview-v7:${SUPPORT_VERSION}"
+    compile "com.android.support:recyclerview-v7:${SUPPORT_VERSION}"
+
+    // We have dependencies on fresco drawees
+    compile "com.facebook.fresco:fresco:${FRESCO_VERSION}"
+
+    compile project(':imageadapter')
+//    compile (name:'imageadapter-debug', ext:'aar')
+}
