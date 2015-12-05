@@ -33,7 +33,7 @@ public class DetailActivity extends AppCompatActivity {
             android.view.ActionMode actionMode;
             @Override
             public void onClick(View v) {
-                if (actionMode != null) {
+                if (actionMode == null) {
                     actionMode = startActionMode(new android.view.ActionMode.Callback() {
                         @Override
                         public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
@@ -55,7 +55,9 @@ public class DetailActivity extends AppCompatActivity {
 
                         }
                     });
-                    actionMode.setTitle("Action Mode");
+                    if (actionMode != null) {
+                        actionMode.setTitle("Action Mode");
+                    }
                 } else {
                     actionMode.finish();
                     actionMode  = null;

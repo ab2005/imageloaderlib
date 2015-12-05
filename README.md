@@ -6,7 +6,6 @@ providing a simple unified interface to the most popular image loaders:
 [UniversalImageLoader](https://github.com/nostra13/Android-Universal-Image-Loader),
 [Glide](https://github.com/bumptech/glide), [AQuery](https://code.google.com/p/android-query/wiki/ImageLoading)
 and [Volley](http://developer.android.com/training/volley/index.html).
-Some discussion about comparing different image loaders could be found [here](http://stackoverflow.com/questions/29363321/picasso-v-s-imageloader-v-s-fresco-vs-glide).
 
 In addition to the option of dynamically selecting the underlying image loader
 at the runtime the Image Loader Adapter Library allows:
@@ -25,25 +24,17 @@ The library supports Android API Level: 16 Android 4.1 (JELLY_BEAN) and later.
 
 ## Setup
 
-To use the Image Loader Adapter Library you need to copy the library archive
-file to the libs folder and include the following into the repositories and dependencies sections
+To use the Image Loader Adapter Library you need include the following into the repositories and dependencies sections
 of your <code>build.graddle</code> file:
+
 
 ```javascript
 repositories {
-    flatDir {
-        dirs 'libs'
-    }
+    jcenter()
 }
 dependencies {
-    compile (name:'imageadapterlib', ext:'aar')
+    compile 'com.seagate.alto:imageadapter:+'
 }
-```
-
-Alternatively you can simple add the following line to the dependencies section of your <code>build.gradle file:
-
-```
-    compile 'com.seagate.alto.imageloaderlib:+'
 ```
 
 ## Getting Started

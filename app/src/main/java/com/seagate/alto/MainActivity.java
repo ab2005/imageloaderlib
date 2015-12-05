@@ -7,7 +7,6 @@ package com.seagate.alto;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -40,7 +39,6 @@ import android.widget.TextView;
 import com.facebook.common.logging.FLog;
 import com.seagate.alto.pages.CardContentFragment;
 import com.seagate.alto.pages.ListContentFragment;
-import com.seagate.alto.pages.SettingsActivity;
 import com.seagate.alto.pages.TileContentFragment;
 import com.seagate.imageadapter.adapters.Adapter;
 import com.seagate.imageadapter.instrumentation.PerfListener;
@@ -64,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int BYTES_IN_MEGABYTE = 1024 * 1024;
 
     private static final long STATS_CLOCK_INTERVAL_MS = 1000;
-    private static final String EXTRA_ALLOW_ANIMATIONS = "allow_animations";
-    private static final String EXTRA_USE_DRAWEE = "use_drawee";
     private static final String EXTRA_CURRENT_ADAPTER_INDEX = "current_adapter_index";
     private static final String EXTRA_CURRENT_SOURCE_ADAPTER_INDEX = "current_source_adapter_index";
     private static final String EXTRA_CURRENT_ADAPTER_NAME = "current_adapter_name";
@@ -74,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private TextView mStatsDisplay;
 
-    private boolean mUseDrawee = true;
-    private boolean mAllowAnimations;
     private int mCurrentLoaderAdapterIndex;
     private int mCurrentSourceAdapterIndex;
 
@@ -86,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mUrlsLocal;
 
-    private PerfListener mPerfListener;
     private ViewPager viewPager;
     private Handler mHandler;
     private Runnable mStatsClockTickRunnable;
@@ -94,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private String mCurrentSourceName;
 
     private TextView mImageSourceLabel;
+
+    private MyAdapterDelegate mAdapterDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,11 +133,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        {// Set Tabs inside Toolbar
-//            TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-//            tabs.setupWithViewPager(viewPager);
-        }
-
         {// Add Toolbar to Main screen
             setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
             // Adding menu icon to Toolbar
@@ -163,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public boolean onNavigationItemSelected(MenuItem menuItem) {
                             int id = menuItem.getItemId();
-                            switch(id) {
+                            switch (id) {
                                 case R.id.main_action_image_source_local:
                                     setSourceAdapter(R.id.action_image_source_local);
                                     break;
@@ -171,8 +161,7 @@ public class MainActivity extends AppCompatActivity {
                                     setSourceAdapter(R.id.action_image_source_network);
                                     break;
                                 case R.id.action_settings:
-                                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                                    MainActivity.this.startActivity(intent);
+                                    // TODO
                                     break;
                             }
 
@@ -197,14 +186,11 @@ public class MainActivity extends AppCompatActivity {
 
         {// Init image loaders settings
             if (savedInstanceState != null) {
-                mAllowAnimations = savedInstanceState.getBoolean(EXTRA_ALLOW_ANIMATIONS);
-                mUseDrawee = savedInstanceState.getBoolean(EXTRA_USE_DRAWEE);
                 mCurrentLoaderAdapterIndex = savedInstanceState.getInt(EXTRA_CURRENT_ADAPTER_INDEX);
                 mCurrentSourceAdapterIndex = savedInstanceState.getInt(EXTRA_CURRENT_SOURCE_ADAPTER_INDEX);
                 mCurrentAdapterName = savedInstanceState.getString(EXTRA_CURRENT_ADAPTER_NAME);
                 mCurrentSourceName = savedInstanceState.getString(EXTRA_CURRENT_SOURCE_ADAPTER_NAME);
             } else {
-                mAllowAnimations = true;
                 mCurrentLoaderAdapterIndex = R.id.action_image_loader_fresco_okhttp;
                 mCurrentSourceAdapterIndex = R.id.action_image_source_network;
                 mCurrentAdapterName = "fresco + okhttp";
@@ -224,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mImageSourceLabel.setText(mCurrentSourceName);
+
+        mAdapterDelegate = new MyAdapterDelegate(this);
     }
 
     @Override
@@ -257,8 +245,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(EXTRA_ALLOW_ANIMATIONS, mAllowAnimations);
-        outState.putBoolean(EXTRA_USE_DRAWEE, mUseDrawee);
         outState.putInt(EXTRA_CURRENT_ADAPTER_INDEX, mCurrentLoaderAdapterIndex);
         outState.putInt(EXTRA_CURRENT_SOURCE_ADAPTER_INDEX, mCurrentSourceAdapterIndex);
         outState.putString(EXTRA_CURRENT_ADAPTER_NAME, mCurrentAdapterName);
@@ -269,17 +255,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        // Check current selection
-        if (mCurrentLoaderAdapterIndex != 0) {
-            menu.findItem(mCurrentLoaderAdapterIndex).setChecked(true);
-        }
-        if (mCurrentSourceAdapterIndex != 0) {
-            menu.findItem(mCurrentSourceAdapterIndex).setChecked(true);
-        }
-//        menu.findItem(R.id.allow_animations).setChecked(mAllowAnimations);
-//        menu.findItem(R.id.use_drawee).setChecked(mUseDrawee);
-
         return true;
     }
 
@@ -294,12 +269,7 @@ public class MainActivity extends AppCompatActivity {
         if (group_id == R.id.group_image_loader) {
             mCurrentAdapterName = (String) item.getTitle();
             setCurrentLoaderAdapter(id);
-        } else if (group_id == R.id.group_image_source) {
-            mCurrentSourceName = (String) item.getTitle();
-            setSourceAdapter(id);
-        }
-
-        if (id == R.id.action_settings) {
+        } else if (id == R.id.action_settings) {
             return true;
         } else if (id == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
@@ -308,82 +278,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private Adapter getImageListAdapter(int pageIndex, int loaderId, final PerfListener pl) {
-
-
-        boolean useDrawee = (loaderId == R.id.action_image_loader_fresco || loaderId == R.id.action_image_loader_fresco_okhttp);
-        int[] layouts = {R.layout.instr_item_tile, R.layout.instr_item_card, R.layout.instr_item_list};
-        int[] frescoLayouts = {R.layout.instr_item_tile_fresco, R.layout.instr_item_card_fresco, R.layout.instr_item_list_fresco};
-        int[] volleyLayouts = {R.layout.instr_item_tile_fresco, R.layout.instr_item_card_fresco, R.layout.instr_item_list_fresco};
-
-        final int layoutId;
-        if (loaderId == R.id.action_image_loader_volley) {
-            layoutId = volleyLayouts[pageIndex];
-        } else {
-            layoutId = useDrawee ? frescoLayouts[pageIndex] : layouts[pageIndex];
-        }
-
-        Adapter.Delegate ad = new Adapter.Delegate() {
-            public ViewGroup getHolderView(ViewGroup parent, int viewType) {
-                int w = parent.getWidth();
-                int h = parent.getHeight();
-                ViewGroup.LayoutParams lp = parent.getLayoutParams();
-                int wp = lp.width;
-                int hp = lp.height;
-                final View view = getLayoutInflater().inflate(layoutId, parent, false );
-                // TODO: set the view's size, margins, paddings and layout parameters
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, DetailActivity.class);
-                        String url = view.getTag(getImageViewId()) + "";
-                        intent.putExtra("EXTRA_KEY_URL", url);
-                        context.startActivity(intent);
-                    }
-                });
-                return (ViewGroup) view;
-            }
-
-            @Override
-            public int getImageViewId() {
-                return R.id.instr_image;
-            }
-
-            @Override
-            public void bind(View itemView, String url) {
-                itemView.setTag(getImageViewId(), url);
-            }
-
-            @Override
-            public Context getContext() {
-                return MainActivity.this;
-            }
-
-            @Override
-            public PerfListener getPerformanceListener() {
-                return mPerfListener;
-            }
-        };
-
-        int type;
+    private Adapter getImageListAdapter(int pageIndex, int loaderId) {
+        mAdapterDelegate.setLayout(pageIndex, loaderId);
         switch (loaderId) {
             case R.id.action_image_loader_fresco:
-                return Adapter.buildAdapter(Adapter.FRESCO, ad);
+                return Adapter.buildAdapter(Adapter.FRESCO, mAdapterDelegate);
             case R.id.action_image_loader_fresco_okhttp:
-                return Adapter.buildAdapter(Adapter.FRESCO_OKHTTP, ad);
+                return Adapter.buildAdapter(Adapter.FRESCO_OKHTTP, mAdapterDelegate);
             case R.id.action_image_loader_glide:
-                return Adapter.buildAdapter(Adapter.GLIDE, ad);
+                return Adapter.buildAdapter(Adapter.GLIDE, mAdapterDelegate);
             case R.id.action_image_loader_picasso:
-                return Adapter.buildAdapter(Adapter.PICASSO, ad);
+                return Adapter.buildAdapter(Adapter.PICASSO, mAdapterDelegate);
             case R.id.action_image_loader_uil:
-                return Adapter.buildAdapter(Adapter.UNIVERSAL_IMAGE_LIBRARY, ad);
+                return Adapter.buildAdapter(Adapter.UNIVERSAL_IMAGE_LIBRARY, mAdapterDelegate);
             case R.id.action_image_loader_volley:
-                return Adapter.buildAdapter(Adapter.VOLLEY, ad);
+                return Adapter.buildAdapter(Adapter.VOLLEY, mAdapterDelegate);
             case R.id.action_image_loader_volley_drawee:
-                return Adapter.buildAdapter(Adapter.VOLLEY_DRAWEE, ad);
+                return Adapter.buildAdapter(Adapter.VOLLEY_DRAWEE, mAdapterDelegate);
             case R.id.action_image_loader_aquery:
-                return Adapter.buildAdapter(Adapter.ANDROID_QUERY, ad);
+                return Adapter.buildAdapter(Adapter.ANDROID_QUERY, mAdapterDelegate);
             default:
                 throw new IllegalArgumentException("Invalid adaper type");
         }
@@ -401,9 +314,8 @@ public class MainActivity extends AppCompatActivity {
         mMaxThrouput = 0;
         mPixelsLoaded = 0;
         resetAdapter();
-        mPerfListener = new PerfListener();
         int pageIndex = viewPager.getCurrentItem();
-        mCurrentAdapter = getImageListAdapter(pageIndex, mCurrentLoaderAdapterIndex, mPerfListener);
+        mCurrentAdapter = getImageListAdapter(pageIndex, mCurrentLoaderAdapterIndex);
         updateAdapter(mImageUrls);
         updateStats();
 
@@ -418,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
         if (mCurrentAdapter != null) {
             mCurrentAdapter.dispose();
             mCurrentAdapter = null;
+            mAdapterDelegate.resetProfiler();
             System.gc();
             System.runFinalization();
         }
@@ -439,8 +352,9 @@ public class MainActivity extends AppCompatActivity {
     private int mMaxThrouput = -1;
 
     private void updateStats() {
-        if (mPerfListener == null) return;
+        if (mAdapterDelegate == null) return;
 
+        PerfListener profiler = mAdapterDelegate.getPerformanceListener();
         final Runtime runtime = Runtime.getRuntime();
         final long heapMemory = runtime.totalMemory() - runtime.freeMemory();
         final StringBuilder sb = new StringBuilder(DEFAULT_MESSAGE_SIZE);
@@ -451,10 +365,10 @@ public class MainActivity extends AppCompatActivity {
         sb.append(" java, ");
         appendSize(sb, Debug.getNativeHeapSize());
         sb.append(" native\n");
-        appendTime(sb, "Avg wait time: ", mPerfListener.getAverageWaitTime(), "\n");
-        appendNumber(sb, "Requests: ", mPerfListener.getOutstandingRequests(), " outsdng ");
-        appendNumber(sb, "", mPerfListener.getCancelledRequests(), " cncld\n");
-        int n = mPerfListener.getPixelsCount();
+        appendTime(sb, "Avg wait time: ", profiler.getAverageWaitTime(), "\n");
+        appendNumber(sb, "Requests: ", profiler.getOutstandingRequests(), " outsdng ");
+        appendNumber(sb, "", profiler.getCancelledRequests(), " cncld\n");
+        int n = profiler.getPixelsCount();
         int tp = (n - mPixelsLoaded);
         if (mMaxThrouput < tp) {
             mMaxThrouput = tp;
@@ -522,10 +436,9 @@ public class MainActivity extends AppCompatActivity {
         ImageSize staticSize = chooseImageSize();
         ImageUrlsRequestBuilder builder = new ImageUrlsRequestBuilder(url)
                 .addImageFormat(ImageFormat.JPEG, staticSize)
-                .addImageFormat(ImageFormat.PNG, staticSize);
-        if (mAllowAnimations) {
-            builder.addImageFormat(ImageFormat.GIF, ImageSize.ORIGINAL_IMAGE);
-        }
+                .addImageFormat(ImageFormat.PNG, staticSize)
+                .addImageFormat(ImageFormat.GIF, ImageSize.ORIGINAL_IMAGE);
+
         ImageUrlsFetcher.getImageUrls(
                 builder.build(),
                 new ImageUrlsFetcher.Callback() {

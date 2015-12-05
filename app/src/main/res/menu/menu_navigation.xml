@@ -6,16 +6,12 @@
             android:id="@+id/main_action_image_source_local"
             android:icon="@drawable/ic_home_black_24dp"
             android:tint="@color/button_grey"
-            android:title="Local Photo Collection" />
+            android:title="Camera Roll" />
         <item
             android:id="@+id/main_action_image_source_imgur"
             android:icon="@drawable/ic_favorite_black_24dp"
             android:tint="@color/button_grey"
             android:title="Imgur Hot Images" />
-        <item
-            android:icon="@drawable/ic_bookmark_border_black_24dp"
-            android:tint="@color/button_grey"
-            android:title="Three" />
         <item
             android:id="@+id/action_settings"
             android:icon="@android:drawable/ic_menu_edit"

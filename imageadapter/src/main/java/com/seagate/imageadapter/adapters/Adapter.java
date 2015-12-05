@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.seagate.imageadapter.Drawees;
 import com.seagate.imageadapter.configs.imagepipeline.ImagePipelineConfigFactory;
 import com.seagate.imageadapter.holders.BaseViewHolder;
 import com.seagate.imageadapter.instrumentation.PerfListener;
@@ -25,6 +26,11 @@ public abstract class Adapter extends RecyclerView.Adapter<BaseViewHolder<?>> {
     static public final int ANDROID_QUERY = 5;
     static public final int VOLLEY = 6;
     static public final int VOLLEY_DRAWEE = 7;
+
+
+    public static void initializeWithDefaults(Context ctx) {
+        Drawees.initializeWithDefaults(ctx);
+    }
 
     public static Adapter buildAdapter(int type, Adapter.Delegate ad) {
         final Context ctx = ad.getContext();
@@ -59,7 +65,7 @@ public abstract class Adapter extends RecyclerView.Adapter<BaseViewHolder<?>> {
     private final Delegate mDelegate;
     private final List<String> mModel;
 
-    public Adapter(final Context context, final PerfListener perfListener, Delegate delegate) {
+    Adapter(final Context context, final PerfListener perfListener, Delegate delegate) {
         this.mContext = context;
         this.mPerfListener = perfListener;
         this.mModel = new LinkedList<String>();

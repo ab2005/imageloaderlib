@@ -1,21 +1,46 @@
 apply plugin: 'com.android.library'
 
+// for publishing the library
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+    libraryName = 'ImageLoader'
+    publishedGroupId = 'com.seagate.alto'
+    artifact = 'imageadapter'
+    libraryVersion = '0.1.1'
+
+    libraryDescription = 'A library with a wrapper for Android RecyclingView.Adapter providing a choice of pluggable instrumented image loaders including Fresco, Picasso, Android Query, Universal Image Loader, Glide and Volley.'
+
+    siteUrl = 'https://github.com/ab2005/imageloaderlib'
+    gitUrl = 'https://github.com/ab2005/imageloaderlib.git'
+
+    developerId = 'ab2005'
+    developerName = 'Alexandre Barilov'
+    developerEmail = 'ab2005@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+group = publishedGroupId
+version = libraryVersion
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
-
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1
-        versionName "1.0"
+        versionName version
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
         android {
             lintOptions {
                 abortOnError false
@@ -24,60 +49,105 @@ android {
     }
 }
 
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.libraryVariants["release"].javaCompile.source
+    ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+    classpath = files(android.libraryVariants["release"].javaCompile.classpath.files) + files(ext.androidJar)
+    options.links("http://docs.oracle.com/javase/7/docs/api/");
+    options.links("http://d.android.com/reference/");
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    encoding = 'UTF-8'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-
-//    compile "com.android.support:support-v4:${SUPPORT_VERSION}"
-    compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
-    compile "com.android.support:design:${SUPPORT_VERSION}"
-    compile "com.android.support:cardview-v7:${SUPPORT_VERSION}"
-
-//    compile "com.android.support:recyclerview-v7:${SUPPORT_VERSION}"
-//    compile "com.android.support:recyclerview-v7:23.1.1"
     compile 'com.android.support:recyclerview-v7:+'
-
-
-    compile "com.facebook.fresco:fresco:${FRESCO_VERSION}"
-    compile "com.github.bumptech.glide:glide:${GLIDE_VERSION}"
-    compile "com.mcxiaoke.volley:library:${VOLLEY_VERSION}"
-    compile "com.nostra13.universalimageloader:universal-image-loader:${UIL_VERSION}"
-    compile "com.squareup.picasso:picasso:${PICASSO_VERSION}"
-    compile "com.googlecode.android-query:android-query:${AQUERY_VERSION}"
-
-    compile "com.squareup.okhttp:okhttp:${OKHTTP_VERSION}"
-
-    compile "com.facebook.stetho:stetho:${STETHO_VERSION}"
-    compile "com.facebook.stetho:stetho-okhttp:${STETHO_VERSION}"
-    compile "com.facebook.stetho:stetho-urlconnection:${STETHO_VERSION}"
-    compile "com.facebook.stetho:stetho-js-rhino:${STETHO_VERSION}"
+    compile "com.facebook.fresco:fresco:+"
+    compile "com.github.bumptech.glide:glide:+"
+    compile "com.mcxiaoke.volley:library:+"
+    compile "com.nostra13.universalimageloader:universal-image-loader:+"
+    compile "com.squareup.picasso:picasso:+"
+    compile "com.googlecode.android-query:android-query:+"
+    compile "com.squareup.okhttp:okhttp:+"
+    compile "com.facebook.stetho:stetho:+"
+    compile "com.facebook.stetho:stetho-okhttp:+"
+    compile "com.facebook.stetho:stetho-urlconnection:+"
+    compile "com.facebook.stetho:stetho-js-rhino:+"
 }
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'Image-loader'
-
-    publishedGroupId = 'com.seagate.imageloaderlib'
-    libraryName = 'Image-loader'
-    artifact = 'Image-loader'
-
-    libraryDescription = 'A wrapper for Android RecyclingView.Adapter providing pluggable instrumented image loaders including Fresco, Picasso, Android Query, Universal Image Loader, Glide and Volley. '
-
-    siteUrl = 'https://github.com/ab2005/imageloaderlib'
-    gitUrl = 'https://github.com/ab2005/imageloaderlib.git'
-
-    libraryVersion = '0.0.1'
-
-    developerId = 'ab2005'
-    developerName = 'Alex Barilov'
-    developerEmail = 'ab2005@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-
-    PUBLISH_GROUP_ID = 'com.seagate.imageloaderlib'
-    PUBLISH_ARTIFACT_ID = 'Image-loader'
-    PUBLISH_VERSION = '0.0.1'
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                groupId publishedGroupId
+                artifactId artifact
+                name libraryName
+                description libraryDescription
+                url siteUrl
+                licenses {
+                    license {
+                        name licenseName
+                        url licenseUrl
+                    }
+                }
+                developers {
+                    developer {
+                        id developerId
+                        name developerName
+                        email developerEmail
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
 }
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'image-adapter'
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+
+        version {
+            released  = new Date()
+            vcsTag = version
+//            name = '0.0.3-trial'
+//            desc = 'Trial publishing'
+//            attributes = ['gradle-plugin': 'com.seagate.imageloaderlib:foo:bar-0.0.1']
+        }
+    }
+}
+
 
