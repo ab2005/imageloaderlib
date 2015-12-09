@@ -5,21 +5,23 @@
 package com.seagate.alto;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String EXTRA_CURRENT_SOURCE_ADAPTER_INDEX = "current_source_adapter_index";
     private static final String EXTRA_CURRENT_ADAPTER_NAME = "current_adapter_name";
     private static final String EXTRA_CURRENT_SOURCE_ADAPTER_NAME = "current_source_adapter_name";
+    private static final String EXTRA_IMAGE_URL_LIST = "image_url_list";
 
     private DrawerLayout mDrawerLayout;
     private TextView mStatsDisplay;
@@ -76,11 +79,11 @@ public class MainActivity extends AppCompatActivity {
     private Adapter mCurrentAdapter;
     private RecyclerView mRecyclerView;
 
-    private List<String> mImageUrls = new ArrayList<>();
+    private ArrayList<String> mImageUrls = new ArrayList<>();
 
     private boolean mUrlsLocal;
 
-    private ViewPager viewPager;
+    private ViewPager mViewPager;
     private Handler mHandler;
     private Runnable mStatsClockTickRunnable;
     private String mCurrentAdapterName;
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -101,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
         mImageSourceLabel = (TextView) findViewById(R.id.main_image_source_label);
 
         {// Set ViewPager for each Tabs
-            viewPager = (ViewPager) findViewById(R.id.viewpager);
-            viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            mViewPager = (ViewPager) findViewById(R.id.viewpager);
+            mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
                 private Fragment[] items = {
                         new TileContentFragment(),
                         new CardContentFragment(),
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     return titles[position];
                 }
             });
-            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
                     setCurrentLoaderAdapter(mCurrentLoaderAdapterIndex);
@@ -186,10 +190,13 @@ public class MainActivity extends AppCompatActivity {
 
         {// Init image loaders settings
             if (savedInstanceState != null) {
+                Log.d(TAG, "onCreate(): savedInstanceState");
+
                 mCurrentLoaderAdapterIndex = savedInstanceState.getInt(EXTRA_CURRENT_ADAPTER_INDEX);
                 mCurrentSourceAdapterIndex = savedInstanceState.getInt(EXTRA_CURRENT_SOURCE_ADAPTER_INDEX);
                 mCurrentAdapterName = savedInstanceState.getString(EXTRA_CURRENT_ADAPTER_NAME);
                 mCurrentSourceName = savedInstanceState.getString(EXTRA_CURRENT_SOURCE_ADAPTER_NAME);
+                mImageUrls = savedInstanceState.getStringArrayList(EXTRA_IMAGE_URL_LIST);
             } else {
                 mCurrentLoaderAdapterIndex = R.id.action_image_loader_fresco_okhttp;
                 mCurrentSourceAdapterIndex = R.id.action_image_source_network;
@@ -197,8 +204,6 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentSourceName = "network";
             }
         }
-
-        mCurrentAdapter = null;
 
         mHandler = new Handler(Looper.getMainLooper());
         mStatsClockTickRunnable = new Runnable() {
@@ -216,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart()");
         super.onStart();
         updateStats();
         scheduleNextStatsClockTick();
@@ -224,14 +230,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
+        Log.d(TAG, "onResume()");
         super.onResume();
     }
 
     protected void onStop() {
+        Log.d(TAG, "onStop()");
         super.onStop();
         cancelNextStatsClockTick();
         resetAdapter();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
+        super.onDestroy();
     }
 
     private void scheduleNextStatsClockTick() {
@@ -244,11 +264,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState()");
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRA_CURRENT_ADAPTER_INDEX, mCurrentLoaderAdapterIndex);
         outState.putInt(EXTRA_CURRENT_SOURCE_ADAPTER_INDEX, mCurrentSourceAdapterIndex);
         outState.putString(EXTRA_CURRENT_ADAPTER_NAME, mCurrentAdapterName);
         outState.putString(EXTRA_CURRENT_SOURCE_ADAPTER_NAME, mCurrentSourceName);
+        outState.putStringArrayList(EXTRA_IMAGE_URL_LIST, mImageUrls);
     }
 
     @Override
@@ -306,23 +328,27 @@ public class MainActivity extends AppCompatActivity {
      * Enforce adapter setup
      */
     public void setAdapter() {
+        Log.d(TAG, "setAdapter");
         setCurrentLoaderAdapter(mCurrentLoaderAdapterIndex);
     }
 
     private void setCurrentLoaderAdapter(int id) {
+        Log.d(TAG, "setAdapter " + id + ", #urls = " + mImageUrls.size());
         mCurrentLoaderAdapterIndex = id;
         mMaxThrouput = 0;
         mPixelsLoaded = 0;
         resetAdapter();
-        int pageIndex = viewPager.getCurrentItem();
+        int pageIndex = mViewPager.getCurrentItem();
         mCurrentAdapter = getImageListAdapter(pageIndex, mCurrentLoaderAdapterIndex);
         updateAdapter(mImageUrls);
         updateStats();
 
-        FragmentPagerAdapter a = (FragmentPagerAdapter) viewPager.getAdapter();
+        FragmentPagerAdapter a = (FragmentPagerAdapter) mViewPager.getAdapter();
         mRecyclerView = (RecyclerView) a.getItem(pageIndex).getView();
         if (mRecyclerView != null) {
             mRecyclerView.setAdapter(mCurrentAdapter);
+        } else {
+            Log.d(TAG, "setAdapter: mRecyclerView == null");
         }
     }
 
@@ -431,7 +457,92 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean checkRequestPermission(final String permission) {
+        int permissionState = ActivityCompat.checkSelfPermission(this, permission);
+        if (permissionState != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, permission + " permission has NOT been granted.");
+            boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
+            // Provide an additional rationale to the user. This would happen if the user denied the
+            // request previously, but didn't check the "Don't ask again" checkbox.
+            if (shouldProvideRationale) {
+                View rootView = findViewById(R.id.main_content);
+                String rationale = "TODO Permission rationale to request internet access";//R.string.camera_permission_rationale;
+                Log.i(TAG, "Displaying " + permission + " permission rationale to provide additional context.");
+                Snackbar.make(rootView, rationale, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK" /*R.string.ok*/, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, 123);
+                            }
+                        })
+                        .show();
+            } else {
+                Log.i(TAG, "Requesting " + permission + " permission");
+                // Request permission. It's possible this can be auto answered if device policy
+                // sets the permission in a given state or the user denied the permission
+                // previously and checked "Never ask again".
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, 123);
+            }
+            return false;
+        } else {
+            Log.i(TAG, permission + " permission has already been granted.");
+            return true;
+        }
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.i(TAG, "onRequestPermissionResult");
+        if (grantResults.length <= 0) {
+            // If user interaction was interrupted, the permission request is cancelled and you
+            // receive empty arrays.
+            Log.i(TAG, "Permission request was cancelled.");
+        } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission was granted.;
+            if (Manifest.permission.INTERNET.equals(permissions[0])) {
+                loadNetworkUrls();
+            } else if (Manifest.permission.READ_EXTERNAL_STORAGE.equals(permissions[0])) {
+                loadLocalUrls();
+            }
+        } else {
+            // Permission denied.
+            // In this Activity we've chosen to notify the user that they
+            // have rejected a core permission for the app since it makes the Activity useless.
+            // We're communicating this message in a Snackbar since this is a sample app, but
+            // core permissions would typically be best requested during a welcome-screen flow.
+
+            // Additionally, it is important to remember that a permission might have been
+            // rejected without asking the user for permission (device policy or "Never ask
+            // again" prompts). Therefore, a user interface affordance is typically implemented
+            // when permissions are denied. Otherwise, your app could appear unresponsive to
+            // touches or interactions which have required permissions.
+            View rootView = findViewById(R.id.main_content);
+            String deniedExplanation = "R.string.camera_permission_denied_explanation";//R.string.camera_permission_denied_explanation;
+            Snackbar.make(rootView, deniedExplanation, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Settings"/*R.string.settings*/, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Build intent that displays the App settings screen.
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+        }
+    }
+
     private void loadNetworkUrls() {
+        if (!checkRequestPermission(Manifest.permission.INTERNET)) {
+            return;
+        }
+
         String url = "https://api.imgur.com/3/gallery/hot/viral/0.json";
         ImageSize staticSize = chooseImageSize();
         ImageUrlsRequestBuilder builder = new ImageUrlsRequestBuilder(url)
@@ -447,23 +558,18 @@ public class MainActivity extends AppCompatActivity {
                         // If the user changes to local images before the call comes back, then this should
                         // be ignored
                         if (!mUrlsLocal) {
-                            mImageUrls = result;
+                            mImageUrls = new ArrayList<String>(result);
                             updateAdapter(mImageUrls);
                         }
                     }
                 });
     }
 
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermission() {
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
-        }
-    }
-
     private void loadLocalUrls() {
+        if (!checkRequestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return;
+        }
+
         Uri externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {MediaStore.Images.Media._ID};
         Cursor cursor = null;
@@ -501,9 +607,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ImageSize chooseImageSize() {
-        if (viewPager == null) return ImageSize.LARGE_THUMBNAIL;
-        int c = viewPager.getCurrentItem();
-        FragmentPagerAdapter a = (FragmentPagerAdapter) viewPager.getAdapter();
+        if (mViewPager == null) return ImageSize.LARGE_THUMBNAIL;
+        int c = mViewPager.getCurrentItem();
+        FragmentPagerAdapter a = (FragmentPagerAdapter) mViewPager.getAdapter();
         if (a == null) return ImageSize.LARGE_THUMBNAIL;
         mRecyclerView = (RecyclerView) a.getItem(c).getView();
         if (mRecyclerView == null) return ImageSize.LARGE_THUMBNAIL;
