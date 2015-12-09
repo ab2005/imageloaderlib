@@ -3,9 +3,11 @@ package com.seagate.alto.pages;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,21 @@ import com.seagate.alto.R;
  * Provides UI for the view with Tile.
  */
 public class TileContentFragment extends Fragment {
+    private static final String TAG = TileContentFragment.class.getName();
     int layoutId = R.layout.instr_item_tile;
+    private RecyclerView recyclerView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+        Log.d(TAG, "OnCreateView");
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+        return recyclerView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "OnViewCreated");
         // Set padding for Tiles
         int tilePadding = getResources().getDimensionPixelSize(R.dimen.tile_padding);
         recyclerView.setPadding(tilePadding, tilePadding, tilePadding, tilePadding);
@@ -30,14 +43,20 @@ public class TileContentFragment extends Fragment {
         ((MainActivity)getActivity()).setAdapter();
 
         if (recyclerView.getAdapter() == null) {
+            Log.d(TAG, "OnViewCreated: recyclerView.getAdapter() == null");
             RecyclerView.Adapter adapter = ((MainActivity)getActivity()).getCurrentAdaper();
             if (adapter == null) {
                 adapter = new ContentAdapter();
             }
             recyclerView.setAdapter(adapter);
         }
+    }
 
-        return recyclerView;
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume");
+        ((MainActivity)getActivity()).setAdapter();
+        super.onResume();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
