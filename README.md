@@ -41,11 +41,12 @@ dependencies {
 
 ### Providing application permissions
 
-For images from the network, you will need to request Internet permission
-from your users. Add this line to your AndroidManifest.xml file:
+For images from the network, you will need to request Internet permission from your users. To access
+ from the camera roll you will need get permission for reading local storage. Add this to your AndroidManifest.xml file:
 
 ```
-  <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_LOCAL_STORAGE"/>
 ```
 
 ### Initilaizing the library
@@ -55,16 +56,16 @@ initialize the Image Loader Adapter Library.
 You should only call initialize once. The Application class would be a good place.
 
 ```java
-import android.app.Application;
-import com.seagate.imageadapter.Adapter;
-
-public class MainApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Adapter.initializeWithDefaults(this);
+    import android.app.Application;
+    import com.seagate.imageadapter.Adapter;
+    
+    public class MainApplication extends Application {
+        @Override
+        public void onCreate() {
+            super.onCreate();
+            Adapter.initializeWithDefaults(this);
+        }
     }
-}
 ```
 
 ### Defining layout with instrumented image views
@@ -79,12 +80,6 @@ top-level element of the xml layout and define the attributes of the
 `com.seagate.imageadapter.instrumentation.InstrumentedDraweeView` such as:
 
 ```xml
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
     <com.seagate.imageadapter.instrumentation.InstrumentedDraweeView
         android:id="@+id/instr.image"
         android:layout_width="@dimen/avator_size"
@@ -107,11 +102,6 @@ top-level element of the xml layout and define the attributes of the
 To define layout for all other image loaders use `com.seagate.imageadapter.instrumentation.InstrumentedImageView` class:
 
 ```xml
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
     <com.seagate.imageadapter.instrumentation.InstrumentedImageView
         android:id="@+id/instr.image"
         android:layout_width="@dimen/avator_size"
@@ -124,46 +114,46 @@ To obtain an instance of the image loader adapter you need to provide an instanc
 Adapter.Delegate:
 
 ```java
-private final PerformanceListener profiler = new PerformanceListener();
-
-Adapter.Delegate delegate = new Adapter.Delegate() {
-      final int layoutId = R.layout.instr_item_tile_fresco;
-      public ViewGroup getHolderView(ViewGroup parent, int viewType) {
-          final View view = getLayoutInflater().inflate(layoutId, parent, false );
-          // TODO: set the view's size, margins, paddings and layout parameters
-          // Attach necessary event handlers...
-          view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getContext(), DetailActivity.class);
-                    String url = (String)view.getTag(getImageViewId());
-                    intent.putExtra("EXTRA_KEY_IMAGE_URL", url);
-                    context.startActivity(intent);
-                }
-          });
-          return (ViewGroup) view;
-      }
-
-      @Override
-      public int getImageViewId() {
-          return R.id.instr_image;
-      }
-
-      @Override
-      public void bind(View itemView, String url) {
-          itemView.setTag(getImageViewId(), url);
-      }
-
-      @Override
-      public Context getContext() {
-          return MainActivity.this;
-      }
-
-      @Override
-      public PerfListener getPerformanceListener() {
-          return profiler;
-      }
-  };
+    Adapter.Delegate delegate = new Adapter.Delegate() {
+          private final PerformanceListener profiler = new PerformanceListener();
+    
+          final int layoutId = R.layout.instr_item_tile_fresco;
+          public ViewGroup getHolderView(ViewGroup parent, int viewType) {
+              final View view = getLayoutInflater().inflate(layoutId, parent, false );
+              // TODO: set the view's size, margins, paddings and layout parameters
+              // Attach necessary event handlers...
+              view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), DetailActivity.class);
+                        String url = (String)view.getTag(getImageViewId());
+                        intent.putExtra("EXTRA_KEY_IMAGE_URL", url);
+                        context.startActivity(intent);
+                    }
+              });
+              return (ViewGroup) view;
+          }
+    
+          @Override
+          public int getImageViewId() {
+              return R.id.instr_image;
+          }
+    
+          @Override
+          public void bind(View itemView, String url) {
+              itemView.setTag(getImageViewId(), url);
+          }
+    
+          @Override
+          public Context getContext() {
+              return MainActivity.this;
+          }
+    
+          @Override
+          public PerfListener getPerformanceListener() {
+              return profiler;
+          }
+    };
 ```
 
 It is a responsibility of the `delegate` to provide the application context,
@@ -176,31 +166,31 @@ The Performance Listener wil be called to collect performance stats.
 ### Building Image Loader Adapter
 
 ```java
-  Adapter adapter = Adapter.build(Adapter.FRESCO, delegate);
+    Adapter adapter = Adapter.build(Adapter.FRESCO, delegate);
 ```
 
 ### Collecting Performance Stats
 
 You can query the instance of your PerformanceListener to obtain the image loader stats:
 
-```java
-private void updateStats() {
-    final long heapMemory = Runtime.getRuntime().totalMemory() - runtime.freeMemory();
-    final StringBuilder sb = new StringBuilder(DEFAULT_MESSAGE_SIZE);
-    sb.append("Heap: ");
-    appendSize(sb, heapMemory);
-    sb.append(" java, ");
-    appendSize(sb, Debug.getNativeHeapSize());
-    sb.append(" native\n");
-    appendTime(sb, "Avg wait time: ", profiler.getAverageWaitTime(), "\n");
-    appendNumber(sb, "Requests: ", profiler.getOutstandingRequests(), " outsdng ");
-    appendNumber(sb, "", profiler.getCancelledRequests(), " cncld\n");
-    int n = profiler.getPixelsCount();
-    sb.append("Pixels loaded: " + n);
-    final String message = sb.toString();
-    mStatsDisplay.setText(message);
-    Log.i(TAG, message);
-}
+```Java
+    private void updateStats() {
+        final long heapMemory = Runtime.getRuntime().totalMemory() - runtime.freeMemory();
+        final StringBuilder sb = new StringBuilder(DEFAULT_MESSAGE_SIZE);
+        sb.append("Heap: ");
+        appendSize(sb, heapMemory);
+        sb.append(" java, ");
+        appendSize(sb, Debug.getNativeHeapSize());
+        sb.append(" native\n");
+        appendTime(sb, "Avg wait time: ", profiler.getAverageWaitTime(), "\n");
+        appendNumber(sb, "Requests: ", profiler.getOutstandingRequests(), " outsdng ");
+        appendNumber(sb, "", profiler.getCancelledRequests(), " cncld\n");
+        int n = profiler.getPixelsCount();
+        sb.append("Pixels loaded: " + n);
+        final String message = sb.toString();
+        mStatsDisplay.setText(message);
+        Log.i(TAG, message);
+    }
 ```
 
 ### Debugging with Chrome DevTools
