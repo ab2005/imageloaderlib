@@ -16,7 +16,7 @@ import com.seagate.alto.provider.imagepipeline.ImagePipelineConfigFactory;
  */
 public class FrescoClient {
     public static void init(Context context, Provider provider) {
-        ImagePipelineConfig config = ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(context, provider);
+        ImagePipelineConfig config = ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(context);
         Fresco.initialize(context, config);
     }
 }

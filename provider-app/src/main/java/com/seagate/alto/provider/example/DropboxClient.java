@@ -17,7 +17,8 @@ public class DropboxClient {
 
     public static void init(String accessToken) {
         if (sProvider == null) {
-            sProvider = new DbxProvider(accessToken, USER_AGENT);
+            sProvider = new DbxProvider();
+            sProvider.setAccessToken(accessToken);
         }
     }
 

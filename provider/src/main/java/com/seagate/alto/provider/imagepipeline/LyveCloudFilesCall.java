@@ -112,6 +112,7 @@ public class LyveCloudFilesCall implements OkHttpNetworkFetcher.Call {
 
                     @Override
                     public void onFailure(final Request request, final IOException e) {
+                        Log.e(TAG, "Request failed: " + request.httpUrl() + ", " + request.body());
                         handleException(httpCall, e, callback);
                     }
                 });
@@ -132,7 +133,7 @@ public class LyveCloudFilesCall implements OkHttpNetworkFetcher.Call {
      * and onCancellation is called. Otherwise onFailure is called.
      */
     private void handleException(final com.squareup.okhttp.Call call, final Exception e, final NetworkFetcher.Callback callback) {
-        Log.e(TAG, "handleException", e);
+        Log.e(TAG, "handleException : " + e.getMessage());
         if (call.isCanceled()) {
             callback.onCancellation();
         } else {
